@@ -1,5 +1,6 @@
 module Enumerable
   def my_each
+    return self if block_given? != true
     j = 0
     for i in self
       yield i if (self.kind_of?(Array) || self.kind_of?(Range))
@@ -10,7 +11,7 @@ module Enumerable
   end
 end
 
-
+=begin
 rang = ("a".."v")
 rang.my_each {|val| puts val}
 
@@ -19,3 +20,4 @@ arr.my_each {|val| puts val}
 
 dict =  {"birthday" => 1850, "day" => 7, "status" => "dead"}
 dict.my_each {|item, val| puts "value for #{item} = #{val}"}
+=end
