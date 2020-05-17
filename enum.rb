@@ -1,10 +1,18 @@
 module Enumerable
   def my_each
-    lenTH = self.length
-    for i in 0...lenTH
-      yield self[i]
+    for i in 0...self.length
+      yield self[i] if self.kind_of?(Array)
+      yield self.keys[i], self[keys[i]] if self.kind_of?(Hash)
     end
+    self
   end
 end
-ex = [1,2,3,4,7,5]
-ex.my_each {|item| puts item}
+ex = {"birthday" => 1994, "day" => 7, "status" => "dating"}
+ey = ex.keys
+ex.my_each {|item, item_value| puts item_value}
+
+=begin
+ex.my_each do |yul, rata|
+  puts yul
+end
+=end
