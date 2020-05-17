@@ -1,32 +1,21 @@
 module Enumerable
   def my_each
-    if self.kind_of?(Range)
-      range_arr = self.to_a
-      obj_len = range_arr.length
-      if obj_len == nil
-        obj_len = +1.0/0.0
-      end
-    else
-      obj_len = self.length
-    end
-    for i in 0...obj_len
-      yield self[i] if self.kind_of?(Array)
-      yield keys[i], values[i] if self.kind_of?(Hash)
-      yield range_arr[i] if self.kind_of?(Range)
+    j = 0
+    for i in self
+      yield i if (self.kind_of?(Array) || self.kind_of?(Range))
+      yield keys[j], values[j] if self.kind_of?(Hash)
+      j+=1
     end
     return self
   end
 end
 
 
-h = (1..)
-h.my_each {|val| puts val}
-=begin
-ex = {"birthday" => 1994, "day" => 7, "status" => "dating"}
-ey = ex.keys
-ex.my_each {|item, item_value| puts item_value}
+rang = ("a".."v")
+rang.my_each {|val| puts val}
 
-ex.my_each do |yul, rata|
-  puts yul
-end
-=end
+arr = [1,5,5,9,7,0,1]
+arr.my_each {|val| puts val}
+
+dict =  {"birthday" => 1850, "day" => 7, "status" => "dead"}
+dict.my_each {|item, val| puts "value for #{item} = #{val}"}
