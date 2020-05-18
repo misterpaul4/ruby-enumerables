@@ -18,18 +18,18 @@ module Enumerable
 
     j = 0
     self.my_each do |i, hash_value|
-      yield i, j
+      yield i, j if is_a?(Array) || is_a?(Range)
       j+=1
     end
   end
 end
 
-#range = (1..20)
-#range.my_each_with_index {|item|}
+pop = {
+  :staff => 29,
+  :driver => 3,
+  age: 90
+}
 
-
-array = 1..10
-
-array.my_each_with_index do |item, item_index|
-  puts "item #{item} index = #{item_index}"
-end
+#pop.my_each_with_index {|item, value| puts item}
+#pop.my_each {|item| puts item}
+pop.my_each {|item, value| puts "#{item} with value = #{value}"}
