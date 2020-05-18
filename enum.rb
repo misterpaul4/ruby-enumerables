@@ -1,5 +1,5 @@
-# rubocop:disable Style/For
 module Enumerable
+  # rubocop:disable Style/For
   def my_each
     return to_enum(:my_each) if block_given? != true
 
@@ -11,5 +11,25 @@ module Enumerable
     end
     self
   end
+  # rubocop:enable Style/For
+
+  def my_each_with_index
+    return to_enum(:my_each) if block_given? != true
+
+    j = 0
+    self.my_each do |i, hash_value|
+      yield i, j
+      j+=1
+    end
+  end
 end
-# rubocop:enable Style/For
+
+#range = (1..20)
+#range.my_each_with_index {|item|}
+
+
+array = 1..10
+
+array.my_each_with_index do |item, item_index|
+  puts "item #{item} index = #{item_index}"
+end
