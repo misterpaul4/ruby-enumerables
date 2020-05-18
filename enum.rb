@@ -32,15 +32,24 @@ module Enumerable
 
     if is_a?(Hash)
       filtered = {}
-      my_each do |key, value|
-        filtered[key] = value if yield key, value
-      end
+      my_each { |key, value| filtered[key] = value if yield key, value }
+
     else
       filtered = []
-      my_each do |i|
-        filtered.push(i) if yield i
-      end
+      my_each { |i| filtered.push(i) if yield i }
     end
     filtered
+  end
+
+  def my_all?
+    truth_legnth = 0
+    my_each do |i|
+      break unless yield i
+      truth_legnth += 1
+    end
+
+    if truth_legnth == self.length
+      return true
+    end
   end
 end
