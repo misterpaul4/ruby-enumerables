@@ -1,6 +1,7 @@
+# rubocop:disable Style/For
 module Enumerable
   def my_each
-    return self if block_given? != true
+    return to_enum(:my_each) if block_given? != true
 
     j = 0
     for i in self
@@ -11,3 +12,4 @@ module Enumerable
     self
   end
 end
+# rubocop:enable Style/For
