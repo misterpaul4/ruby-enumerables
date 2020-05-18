@@ -24,5 +24,26 @@ module Enumerable
       yield i, j
       j += 1
     end
+    self
+  end
+
+  def my_select
+    return to_enum(:my_select) if block_given? != true
+
+    if is_a?(Hash)
+      filtered = {}
+    else
+      filtered = []
+      my_each do |i|
+        filtered.push(i) if yield i
+      end
+    end
+    filtered
   end
 end
+
+#friends = ['Sharon', 'Leo', 'Leila', 'Brian', 'Arun']
+friends = 1..25
+
+puts "ORIGINAL"
+p friends.my_select {|friend| friend.even?}
