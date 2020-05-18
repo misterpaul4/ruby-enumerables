@@ -32,6 +32,9 @@ module Enumerable
 
     if is_a?(Hash)
       filtered = {}
+      my_each do |key, value|
+        filtered[key] = value if yield key, value
+      end
     else
       filtered = []
       my_each do |i|
@@ -41,9 +44,3 @@ module Enumerable
     filtered
   end
 end
-
-#friends = ['Sharon', 'Leo', 'Leila', 'Brian', 'Arun']
-friends = 1..25
-
-puts "ORIGINAL"
-p friends.my_select {|friend| friend.even?}
