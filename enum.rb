@@ -42,56 +42,42 @@ module Enumerable
   end
 
   def my_all?
-    if block_given? != true
-      unless self.include? (false || nil)
-        return true
-      else
-        return false
+    return false if block_given? != true && include?(false || nil)
+
+    if block_given?
+      my_each do |i|
+        return false unless yield i
       end
     end
 
-    my_each do |i|
-      unless yield i
-        return false
-      end
-    end
-
-    return true
+    true
   end
 
   def my_any?
-    if block_given? != true
-      unless self.include? (false || nil)
-        return false
-      else
-        return true
+    return true if block_given? != true && include?(false || nil)
+
+    if block_given?
+      my_each do |i|
+        return true if yield i
       end
     end
 
-    my_each do |i|
-      if yield i
-        return true
-      end
-    end
-
-    return false
+    false
   end
 
   def my_none?
-    if block_given? != true
-      if self.include? true
-        return false
-      else
-        return true
+    return false if block_given? != true && include?(true)
+
+    if block_given?
+      my_each do |i|
+        return false if yield i
       end
     end
 
-    my_each do |i|
-      if yield i
-        return false
-      end
-    end
-
-    return true
+    true
   end
 end
+
+#p [nil, true, 99].my_any?
+#p %w[ant bear cat].my_all? { |word| word.length < 5 }
+#p [nil, true, 99].my_all?
