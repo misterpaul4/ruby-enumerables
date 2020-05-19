@@ -42,7 +42,13 @@ module Enumerable
   end
 
   def my_all?
-    return true if block_given? != true
+    if block_given? != true
+      unless self.include? (false || nil)
+        return true
+      else
+        return false
+      end
+    end
 
     my_each do |i|
       unless yield i
@@ -54,6 +60,14 @@ module Enumerable
   end
 
   def my_any?
+    if block_given? != true
+      unless self.include? (false || nil)
+        return false
+      else
+        return true
+      end
+    end
+
     my_each do |i|
       if yield i
         return true
@@ -72,7 +86,6 @@ module Enumerable
       end
     end
 
-
     my_each do |i|
       if yield i
         return false
@@ -82,21 +95,3 @@ module Enumerable
     return true
   end
 end
-
-planets_dict = {
-  10 => "big",
-  16 => "very big",
-  -25 => "too small",
-  0 => "nothing"
-}
-
-planets_arr = planets_dict.keys
-
-planets_range = 1..25
-
-puts "ORIGINAL"
-p [nil, false, true].none?
-#p planets_arr.none? {|i| i >= 16}
-puts "\n\n\nMINE"
-p [nil, false, true].my_none?   
-#p planets_arr.my_none? {|i| i >= 16}
