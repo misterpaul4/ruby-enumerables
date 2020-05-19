@@ -42,17 +42,25 @@ module Enumerable
   end
 
   def my_all?
-    truth_legnth = 0
+    return true if block_given? != true
+
     my_each do |i|
-      break unless yield i
-      truth_legnth += 1
+      unless yield i
+        return false
+      end
     end
 
-    if truth_legnth == self.length
-      return true
-    elsif truth_legnth != self.length
-      return false
+    return true
+  end
+
+  def my_any?
+    my_each do |i|
+      if yield i
+        return true
+      end
     end
+
+    return false
   end
 end
 
@@ -68,6 +76,6 @@ planets_arr = planets_dict.keys
 planets_range = 1..25
 
 puts "ORIGINAL"
-p planets_dict.all? {|i, j| puts "ai"}
+p planets_arr.any? {|i| i > 15}
 puts "\n\n\nMINE"
-p planets_dict.my_all? {|i, j| puts "ai"}
+p planets_arr.my_any? {|i| i > 15}
