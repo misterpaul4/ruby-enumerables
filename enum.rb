@@ -62,6 +62,25 @@ module Enumerable
 
     return false
   end
+
+  def my_none?
+    if block_given? != true
+      if self.include? true
+        return false
+      else
+        return true
+      end
+    end
+
+
+    my_each do |i|
+      if yield i
+        return false
+      end
+    end
+
+    return true
+  end
 end
 
 planets_dict = {
@@ -76,6 +95,8 @@ planets_arr = planets_dict.keys
 planets_range = 1..25
 
 puts "ORIGINAL"
-p planets_arr.any? {|i| i > 15}
+p [nil, false, true].none?
+#p planets_arr.none? {|i| i >= 16}
 puts "\n\n\nMINE"
-p planets_arr.my_any? {|i| i > 15}
+p [nil, false, true].my_none?   
+#p planets_arr.my_none? {|i| i >= 16}
