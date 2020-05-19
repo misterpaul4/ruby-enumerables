@@ -76,8 +76,32 @@ module Enumerable
 
     true
   end
+
+  def my_count(param = nil)
+    counter = 0
+    j = 0
+    if param.nil? != true
+      my_each do |i|
+        counter = counter + 1 if param == i
+      end
+    elsif block_given?
+      my_each do |i|
+        counter = j if yield i
+        j+=1
+      end
+    else
+      my_each do |i|
+        j+=1
+        counter = j
+      end
+    end
+
+    counter
+  end
 end
+
 
 # p [nil, true, 99].my_any?
 # p %w[ant bear cat].my_all? { |word| word.length < 5 }
 # p [nil, true, 99].my_all?
+# p [nil, true, 99].my_none?)
