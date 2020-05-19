@@ -78,6 +78,6 @@ module Enumerable
   end
 end
 
-#p [nil, true, 99].my_any?
-#p %w[ant bear cat].my_all? { |word| word.length < 5 }
-#p [nil, true, 99].my_all?
+# p [nil, true, 99].my_any?
+# p %w[ant bear cat].my_all? { |word| word.length < 5 }
+# p [nil, true, 99].my_all?
