@@ -50,6 +50,24 @@ module Enumerable
 
     if truth_legnth == self.length
       return true
+    elsif truth_legnth != self.length
+      return false
     end
   end
 end
+
+planets_dict = {
+  10 => "big",
+  16 => "very big",
+  -25 => "too small",
+  0 => "nothing"
+}
+
+planets_arr = planets_dict.keys
+
+planets_range = 1..25
+
+puts "ORIGINAL"
+p planets_dict.all? {|i, j| puts "ai"}
+puts "\n\n\nMINE"
+p planets_dict.my_all? {|i, j| puts "ai"}
