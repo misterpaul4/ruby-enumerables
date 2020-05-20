@@ -111,17 +111,26 @@ module Enumerable
     collected
   end
 
- def my_inject(accum = nil, &block)
+ def my_inject(accum = nil, symb = nil, &block)
    object_passed = self.is_a?(Range) ? self.to_a : self
 
-   j = 1
-   j = 0 unless accum.nil?
-   accum = first if accum.nil?
+   if block_given?
+     j = 1
+     j = 0 unless accum.nil?
+     accum = first if accum.nil?
+     if symb.nil?
+       while j < object_passed.length
+         #p "acummulator = #{accum} item = #{object_passed[j]}"
+         accum = block.call(accum, object_passed[j])
+         j += 1
+       end
 
-   while j < object_passed.length
-     #p "acummulator = #{accum} item = #{object_passed[j]}"
-     accum = block.call(accum, object_passed[j])
-     j += 1
+     elsif symb.is_a?(String) || symb.is_a?(Symbol)
+       symb = symb.to_s
+       object_passed.my_each do |i|
+         accum = eval "#{accum} #{symb} #{i}"
+       end
+     end
    end
 
    accum
@@ -129,8 +138,9 @@ module Enumerable
 end
 
 puts "MINE"
-p [55555, 7, 10].my_inject { |product, n| product / n }
+#p [5, 7, 10, 20].my_inject(1, :/) { |product, n| n + product }
 puts "\n\n\nRUBY"
-p [55555, 7, 10].inject { |product, n| product / n }
+#p [5, 7, 10, 20].inject(1, :/) { |product, n| n + product }
+
 
 #p [55555,7,10].my_inject { |sum, n| sum / n }
