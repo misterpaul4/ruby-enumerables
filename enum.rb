@@ -3,11 +3,9 @@ module Enumerable
   def my_each
     return to_enum(:my_each) if block_given? != true
 
-    j = 0
     if is_a?(Hash) && Proc.new.arity > 1
-      for i in 0...self.length
-        yield keys[j], values[j]
-        j += 1
+      for i in 0...length
+        yield keys[i], values[i]
       end
     else
       for i in self
@@ -103,6 +101,7 @@ module Enumerable
 
   def my_map(&block)
     return to_enum(:my_map) if block_given? != true
+
     collected = []
 
     my_each do |i|
