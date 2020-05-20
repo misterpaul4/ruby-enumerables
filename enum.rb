@@ -110,4 +110,27 @@ module Enumerable
 
     collected
   end
+
+ def my_inject(accum = nil, &block)
+   object_passed = self.is_a?(Range) ? self.to_a : self
+
+   j = 1
+   j = 0 unless accum.nil?
+   accum = first if accum.nil?
+
+   while j < object_passed.length
+     #p "acummulator = #{accum} item = #{object_passed[j]}"
+     accum = block.call(accum, object_passed[j])
+     j += 1
+   end
+
+   accum
+ end
 end
+
+puts "MINE"
+p [55555, 7, 10].my_inject { |product, n| product / n }
+puts "\n\n\nRUBY"
+p [55555, 7, 10].inject { |product, n| product / n }
+
+#p [55555,7,10].my_inject { |sum, n| sum / n }
