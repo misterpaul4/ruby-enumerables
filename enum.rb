@@ -4,13 +4,15 @@ module Enumerable
     return to_enum(:my_each) if block_given? != true
 
     j = 0
-    for i in self
-      if is_a?(Hash) && Proc.new.arity > 1
+    if is_a?(Hash) && Proc.new.arity > 1
+      for i in 0...self.length
         yield keys[j], values[j]
-      else
+        j += 1
+      end
+    else
+      for i in self
         yield i
       end
-      j += 1
     end
     self
   end
@@ -98,9 +100,15 @@ module Enumerable
 
     counter
   end
-end
 
-# p [nil, true, 99].my_any?
-# p %w[ant bear cat].my_all? { |word| word.length < 5 }
-# p [nil, true, 99].my_all?
-# p [nil, true, 99].my_none?)
+  def my_map(&block)
+    return to_enum(:my_map) if block_given? != true
+    collected = []
+
+    my_each do |i|
+      collected.push(block.call(i))
+    end
+
+    collected
+  end
+end
