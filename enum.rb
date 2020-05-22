@@ -41,12 +41,32 @@ module Enumerable
     filtered
   end
 
-  def my_all?
-    return false if block_given? != true && include?(false || nil)
+  def my_all?(*param)
+    #return false if block_given? != true && include?(false || nil)
 
     if block_given?
       my_each do |i|
         return false unless yield i
+      end
+    else
+      unless param.empty? # when parameter is not empty
+        if param[0].is_a?(Class)
+          puts "it is a class"
+          my_each do |i|
+            return false unless i.is_a?(param[0])
+          end
+        elsif param[0].is_a?(Regexp)
+          #puts "it is a regular expression"
+          my_each do |i|
+            return false unless i === (param[0])
+          end
+        else
+          my_each do |i|
+            return false unless i.eql? param[0]
+          end
+        end
+      else
+        return false if include?(false || nil)
       end
     end
 
@@ -178,25 +198,16 @@ module Enumerable
    accum
  end
 end
-
-p 'my_any?'
-#p %w[ant bear cat].my_any? { |word| word.length >= 3 } #=> 1. true
-#p %w[ant bear cat].my_any? { |word| word.length >= 4 } #=> 2. true
-#p %w[ant bear cat].my_any?(/d/) #=> 3. false
-#p [nil, true, 99].my_any?(Integer) #=> 4. true
-#p [nil, true, 99].my_any? #=> 5. true
-#p [].my_any? #=> 6. false
-#p [1, 2, 3, 's'].my_any?(String) #=> 7. true
-#p [1, 2, 3, 's'].my_any?(Numeric) #=> 8. true
-#p [1, 2, 3].my_any?(String) #=> 9. false
-#p [1, 2].my_any?(1) # 10. true
-#p [1, 1].my_any?(1) # 11. true
-#puts "MINE"
-#p [5, 7, 10, 20].my_inject(1, :/) { |product, n| n + product }
-#p %w[ant bear cat 5].my_any?(/d/)
-#puts "\n\n\nRUBY"
-#p [5, 7, 10, 20].inject(1, :/) { |product, n| n + product }
-#p %w[ant bear cat 5].any?(/s/)
-
-
-#p [55555,7,10].my_inject { |sum, n| sum / n }
+p 'my_all?'
+#p %w[ant bear cat].my_all? { |word| word.length >= 3 } #=> true
+#p %w[ant bear cat].my_all? { |word| word.length >= 5 } #=> false
+#p %w[ant bear cat].my_all?(/t/) #=> false
+#p [1, 2, 3.14].my_all?(Numeric) #=> true
+#p [nil, true, 99].my_all? #=> false
+#p [].my_all? #=> true
+#p [].my_all? # true
+#p [1, 2].my_all?(Numeric) # true
+#p [1, 2].my_all?(String) # false
+#p [1, 2].my_all?(1) # false
+p [1, 1].my_all?(1) # true
+#p "======================="
