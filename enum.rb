@@ -51,12 +51,10 @@ module Enumerable
     else
       unless param.empty? # when parameter is not empty
         if param[0].is_a?(Class)
-          puts "it is a class"
           my_each do |i|
             return false unless i.is_a?(param[0])
           end
         elsif param[0].is_a?(Regexp)
-          #puts "it is a regular expression"
           my_each do |i|
             return false unless i === (param[0])
           end
@@ -82,12 +80,10 @@ module Enumerable
     else
       unless param.empty? # when parameter is not empty
         if param[0].is_a?(Class)
-          puts "it is a class"
           my_each do |i|
             return true if i.is_a?(param[0])
           end
         elsif param[0].is_a?(Regexp)
-          #puts "it is a regular expression"
           my_each do |i|
             return true if i === (param[0])
           end
@@ -113,12 +109,10 @@ module Enumerable
     else
       unless param.empty? # when parameter is not empty
         if param[0].is_a?(Class)
-          puts "it is a class"
           my_each do |i|
             return false if i.is_a?(param[0])
           end
         elsif param[0].is_a?(Regexp)
-          #puts "it is a regular expression"
           my_each do |i|
             return false if i === (param[0])
           end
@@ -157,13 +151,18 @@ module Enumerable
     counter
   end
 
-  def my_map(&block)
-    return to_enum(:my_map) if block_given? != true
-
+  def my_map(*param, &block)
     collected = []
-
-    my_each do |i|
-      collected.push(block.call(i))
+    if block_given?
+      my_each do |i|
+        collected.push(yield i)
+      end
+    elsif param[0].is_a?(Proc)
+      my_each do |i|
+        collected.push(param[0].call(i))
+      end
+    else
+      return to_enum(:my_map)
     end
 
     collected
@@ -221,3 +220,11 @@ end
 def multiply_els(arr)
   arr.my_inject(:*)
 end
+#p (1..9).my_map { |x| x * x }
+p 'my_map'
+arr = [1, 2, 7, 4, 5]
+#p arr.my_map { |x| x * x }
+#p (1..2).my_map { |x| x * x }
+myMapP = proc { |x| x + x }
+p arr.my_map(myMapP)
+#p arr.my_map
