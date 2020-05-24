@@ -217,15 +217,7 @@ module Enumerable
    accum
  end
 end
-#p 'my_none?'
-#p %w[ant bear cat].my_none?(/d/) #=> true
-#p %w[ant bear cat].my_none? { |word| word.length == 5 } #=> true
-#p %w[ant bear cat].my_none? { |word| word.length >= 4 } #=> false
-#p [1, 3.14, 42].my_none?(Float) #=> false
-#p [].my_none? #=> true
-#p [nil].my_none? #=> true
-#p [nil, false].my_none? #=> true
-#p [nil, false, true].my_none? #=> false
-#p [1, 2, 3].my_none?(1) #=> false
-#p [1, 2, 3].my_none?(4) #=> true
-#p [nil, false, nil, false].my_none? #true
+
+def multiply_els(arr)
+  arr.my_inject(:*)
+end
