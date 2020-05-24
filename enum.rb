@@ -104,12 +104,31 @@ module Enumerable
     false
   end
 
-  def my_none?
-    return false if block_given? != true && include?(true)
+  def my_none?(*param)
 
     if block_given?
       my_each do |i|
         return false if yield i
+      end
+    else
+      unless param.empty? # when parameter is not empty
+        if param[0].is_a?(Class)
+          puts "it is a class"
+          my_each do |i|
+            return false if i.is_a?(param[0])
+          end
+        elsif param[0].is_a?(Regexp)
+          #puts "it is a regular expression"
+          my_each do |i|
+            return false if i === (param[0])
+          end
+        else
+          my_each do |i|
+            return false if i.eql? param[0]
+          end
+        end
+      else
+        return false if include?(true)
       end
     end
 
@@ -198,16 +217,15 @@ module Enumerable
    accum
  end
 end
-p 'my_all?'
-#p %w[ant bear cat].my_all? { |word| word.length >= 3 } #=> true
-#p %w[ant bear cat].my_all? { |word| word.length >= 5 } #=> false
-#p %w[ant bear cat].my_all?(/t/) #=> false
-#p [1, 2, 3.14].my_all?(Numeric) #=> true
-#p [nil, true, 99].my_all? #=> false
-#p [].my_all? #=> true
-#p [].my_all? # true
-#p [1, 2].my_all?(Numeric) # true
-#p [1, 2].my_all?(String) # false
-#p [1, 2].my_all?(1) # false
-p [1, 1].my_all?(1) # true
-#p "======================="
+#p 'my_none?'
+#p %w[ant bear cat].my_none?(/d/) #=> true
+#p %w[ant bear cat].my_none? { |word| word.length == 5 } #=> true
+#p %w[ant bear cat].my_none? { |word| word.length >= 4 } #=> false
+#p [1, 3.14, 42].my_none?(Float) #=> false
+#p [].my_none? #=> true
+#p [nil].my_none? #=> true
+#p [nil, false].my_none? #=> true
+#p [nil, false, true].my_none? #=> false
+#p [1, 2, 3].my_none?(1) #=> false
+#p [1, 2, 3].my_none?(4) #=> true
+#p [nil, false, nil, false].my_none? #true
