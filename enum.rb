@@ -1,5 +1,5 @@
+# rubocop:disable Style/For, Metrics/ModuleLength, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Style/EvalWithLocation, Security/Eval, Metrics/BlockNesting, Style/GuardClause
 module Enumerable
-  # rubocop:disable Style/For
   def my_each
     return to_enum(:my_each) if block_given? != true
 
@@ -14,7 +14,6 @@ module Enumerable
     end
     self
   end
-  # rubocop:enable Style/For
 
   def my_each_with_index
     return to_enum(:my_each_with_index) if block_given? != true
@@ -42,29 +41,23 @@ module Enumerable
   end
 
   def my_all?(*param)
-    #return false if block_given? != true && include?(false || nil)
-
     if block_given?
       my_each do |i|
         return false unless yield i
       end
+    elsif param.empty?
+      return false if include?(false || nil)
+    elsif param[0].is_a?(Class)
+      my_each do |i|
+        return false unless i.is_a?(param[0])
+      end
+    elsif param[0].is_a?(Regexp)
+      my_each do |i|
+        return false unless i.match(param[0])
+      end
     else
-      unless param.empty? # when parameter is not empty
-        if param[0].is_a?(Class)
-          my_each do |i|
-            return false unless i.is_a?(param[0])
-          end
-        elsif param[0].is_a?(Regexp)
-          my_each do |i|
-            return false unless i === (param[0])
-          end
-        else
-          my_each do |i|
-            return false unless i.eql? param[0]
-          end
-        end
-      else
-        return false if include?(false || nil)
+      my_each do |i|
+        return false unless i.eql? param[0]
       end
     end
 
@@ -72,28 +65,23 @@ module Enumerable
   end
 
   def my_any?(*param)
-
     if block_given?
       my_each do |i|
         return true if yield i
       end
+    elsif param.empty?
+      return true if include?(false || nil)
+    elsif param[0].is_a?(Class)
+      my_each do |i|
+        return true if i.is_a?(param[0])
+      end
+    elsif param[0].is_a?(Regexp)
+      my_each do |i|
+        return true if i.match(param[0])
+      end
     else
-      unless param.empty? # when parameter is not empty
-        if param[0].is_a?(Class)
-          my_each do |i|
-            return true if i.is_a?(param[0])
-          end
-        elsif param[0].is_a?(Regexp)
-          my_each do |i|
-            return true if i === (param[0])
-          end
-        else
-          my_each do |i|
-            return true if i.eql? param[0]
-          end
-        end
-      else
-        return true if include?(false || nil)
+      my_each do |i|
+        return true if i.eql? param[0]
       end
     end
 
@@ -101,28 +89,23 @@ module Enumerable
   end
 
   def my_none?(*param)
-
     if block_given?
       my_each do |i|
         return false if yield i
       end
+    elsif param.empty?
+      return false if include?(true)
+    elsif param[0].is_a?(Class)
+      my_each do |i|
+        return false if i.is_a?(param[0])
+      end
+    elsif param[0].is_a?(Regexp)
+      my_each do |i|
+        return false if i.match(param[0])
+      end
     else
-      unless param.empty? # when parameter is not empty
-        if param[0].is_a?(Class)
-          my_each do |i|
-            return false if i.is_a?(param[0])
-          end
-        elsif param[0].is_a?(Regexp)
-          my_each do |i|
-            return false if i === (param[0])
-          end
-        else
-          my_each do |i|
-            return false if i.eql? param[0]
-          end
-        end
-      else
-        return false if include?(true)
+      my_each do |i|
+        return false if i.eql? param[0]
       end
     end
 
@@ -167,53 +150,56 @@ module Enumerable
     collected
   end
 
- def my_inject(accum = nil, symb = nil, &block)
-   object_passed = self.is_a?(Range) ? self.to_a : self
+  def my_inject(accum = nil, symb = nil, &block)
+    object_passed = is_a?(Range) ? to_a : self
+    object_length = object_passed.length
 
+    if block_given?
+      j = 1
+      j = 0 unless accum.nil?
+      accum = first if accum.nil?
+      if symb.nil?
+        while j < object_length
+          accum = block.call(accum, object_passed[j])
+          j += 1
+        end
 
-   if block_given?
-     j = 1
-     j = 0 unless accum.nil?
-     accum = first if accum.nil?
-     if symb.nil?
-       while j < object_passed.length
-         accum = block.call(accum, object_passed[j])
-         j += 1
-       end
+      else
+        symb.is_a?(String) || symb.is_a?(Symbol)
+        symb = symb.to_s
+        object_passed.my_each do |i|
+          accum = eval "#{accum} #{symb} #{i}"
+        end
+      end
 
-     else symb.is_a?(String) || symb.is_a?(Symbol)
-       symb = symb.to_s
-       object_passed.my_each do |i|
-         accum = eval "#{accum} #{symb} #{i}"
-       end
-     end
+    else
+      j = 0
+      j = 1 if symb.nil?
+      unless accum.nil?
+        if (accum.is_a?(Symbol) || accum.is_a?(String)) && symb.nil?
+          symb = accum.to_s
+          accum = first
 
-   else
-     j = 0
-     j = 1 if symb.nil?
-     unless accum.nil?
-       if (accum.is_a?(Symbol) || accum.is_a?(String)) && symb.nil?
-         symb = accum.to_s
-         accum = first
-         while j < object_passed.length
-           accum = eval "#{accum} #{symb} #{object_passed[j]}"
-           j += 1
-         end
+          while j < object_length
+            accum = eval "#{accum} #{symb} #{object_passed[j]}"
+            j += 1
+          end
 
-       elsif accum.is_a?(Integer) && (symb.is_a?(Symbol) || symb.is_a?(String))
-         while j < object_passed.length
-           p "acummulator = #{accum} item = #{object_passed[j]}"
-           accum = eval "#{accum} #{symb} #{object_passed[j]}"
-           j += 1
-         end
-       end
-     end
-   end
+        elsif accum.is_a?(Integer) && (symb.is_a?(Symbol) || symb.is_a?(String))
+          while j < object_length
+            accum = eval "#{accum} #{symb} #{object_passed[j]}"
+            j += 1
+          end
+        end
+      end
+    end
 
-   accum
- end
+    accum
+  end
 end
 
 def multiply_els(arr)
   arr.my_inject(:*)
 end
+
+# rubocop:enable Style/For, Metrics/ModuleLength, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Style/EvalWithLocation, Security/Eval, Metrics/BlockNesting, Style/GuardClause
