@@ -153,13 +153,12 @@ module Enumerable
 
   def my_map(*param, &block)
     collected = []
-    if block_given?
+    code_block = Proc.new(&block) if block_given?
+    code_block = param[0] if param[0].is_a?(Proc)
+
+    if code_block.is_a?(Proc)
       my_each do |i|
-        collected.push(yield i)
-      end
-    elsif param[0].is_a?(Proc)
-      my_each do |i|
-        collected.push(param[0].call(i))
+        collected.push(code_block.call(i))
       end
     else
       return to_enum(:my_map)
@@ -178,7 +177,6 @@ module Enumerable
      accum = first if accum.nil?
      if symb.nil?
        while j < object_passed.length
-         #p "acummulator = #{accum} item = #{object_passed[j]}"
          accum = block.call(accum, object_passed[j])
          j += 1
        end
@@ -198,7 +196,6 @@ module Enumerable
          symb = accum.to_s
          accum = first
          while j < object_passed.length
-           #p "acummulator = #{accum} item = #{object_passed[j]}"
            accum = eval "#{accum} #{symb} #{object_passed[j]}"
            j += 1
          end
@@ -220,11 +217,3 @@ end
 def multiply_els(arr)
   arr.my_inject(:*)
 end
-#p (1..9).my_map { |x| x * x }
-p 'my_map'
-arr = [1, 2, 7, 4, 5]
-#p arr.my_map { |x| x * x }
-#p (1..2).my_map { |x| x * x }
-myMapP = proc { |x| x + x }
-p arr.my_map(myMapP)
-#p arr.my_map
