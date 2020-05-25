@@ -9,9 +9,6 @@
 ### Setup
 Clone the repository and run tests passing the right set of arguments, with or without blocks just as you would in the original methods.
 
-### Run tests
-The tests.rb file contains common test cases for these methods. After cloning the repo, cd to the directory and run the test file ("ruby tests.rb").
-
 ## Authors
 
 👤 **Paul**
